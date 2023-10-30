@@ -6,6 +6,12 @@ const port = 3000;
 
 app.use(express.json());
 
+// middleware
+app.use((req, res, next) => {
+    req.requestTime = new Date().toISOString();
+    next();
+});
+
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`));
 
 const getAllTours = (req, res) => {
