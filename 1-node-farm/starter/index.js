@@ -1,7 +1,7 @@
 const http = require('http');
 const url = require('url');
-const path = require("path");
 const fs = require('fs');
+const slugify = require('slugify');
 
 const replaceTemplate = require('./modules/replaceTemplate');
 
@@ -11,6 +11,7 @@ const templateProduct = fs.readFileSync(`${__dirname}/templates/template-product
 
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8');
 const productData = JSON.parse(data);
+const slugs = productData.map(el => slugify(el.productName, { lower: true }));
 
 const server = http.createServer((req, res) => {
     const { query, pathname } = url.parse(req.url, true);
