@@ -10,6 +10,14 @@ const getAllTours = async (req, res) => {
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
 
         const query = Tour.find(JSON.parse(queryStr));
+
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(' ');
+            query.sort(sortBy);
+        } else {
+            query.sort('-createdAt');
+        }
+
         const tours = await query;
 
         res.json({
