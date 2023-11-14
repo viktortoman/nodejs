@@ -1,26 +1,24 @@
 const fs = require('fs');
+const catchAsync = require("../utils/catchAsync");
+const APIFeatures = require("../utils/apiFeatures");
+const User = require("../models/userModel");
 const users = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/users.json`));
 
-checkID = (req, res, next, val) => {
-    const tour = users.find(el => el.id === Number(val));
+const getAllUsers = catchAsync(async (req, res) => {
+    const features = new APIFeatures(User.find(), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
 
-    if (!tour) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'Invalid ID'
-        });
-    }
+    const users = await features.query;
 
-    next();
-}
-
-const getAllUsers = (req, res) => {
     res.json({
         status: 'success',
         results: users.length,
         data: {users}
     });
-}
+});
 
 const getUser = (req, res) => {
     const id = req.params.id * 1;
@@ -99,6 +97,5 @@ module.exports = {
     getUser,
     createUser,
     updateUser,
-    deleteUser,
-    checkID
+    deleteUser
 }
